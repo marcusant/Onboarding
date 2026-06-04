@@ -13,6 +13,9 @@
  */
 
 var CONFIG = {
+  // ID da planilha (está na URL: .../spreadsheets/d/<ESTE_ID>/edit).
+  // Preenchido → funciona mesmo que o script seja standalone (não vinculado à sheet).
+  SPREADSHEET_ID: '1RECxrf6GilQKOPkI-INkVoQOOL8A1WcQEYCil8rNQAo',
   SHEET_NAME: 'Leads',
   // E-mail que recebe o alerta de cada novo lead.
   NOTIFY_EMAIL: 'integramarcus@gmail.com',
@@ -75,7 +78,9 @@ function doPost(e) {
 
 /** Devolve a aba 'Leads', criando-a (com cabeçalho) na primeira vez. */
 function getOrCreateSheet_() {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var ss = CONFIG.SPREADSHEET_ID
+    ? SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID)
+    : SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName(CONFIG.SHEET_NAME);
   if (!sheet) {
     sheet = ss.insertSheet(CONFIG.SHEET_NAME);
