@@ -43,14 +43,19 @@ function doGet() {
   try {
     var sheet = getOrCreateSheet_();
     var ss = sheet.getParent();
+    var lastRow = sheet.getLastRow();
+    var ultimaLinha = lastRow > 1
+      ? sheet.getRange(lastRow, 1, 1, sheet.getLastColumn()).getValues()[0]
+      : [];
     return jsonOut_({
       ok: true,
       message: 'Anamnese API ativa.',
       planilha: ss.getName(),
       planilha_url: ss.getUrl(),
       aba: sheet.getName(),
-      total_linhas: sheet.getLastRow(),       // 1 = só cabeçalho; >1 = já tem leads
-      leads_gravados: Math.max(0, sheet.getLastRow() - 1)
+      total_linhas: lastRow,                   // 1 = só cabeçalho; >1 = já tem leads
+      leads_gravados: Math.max(0, lastRow - 1),
+      ultima_linha: ultimaLinha                // para conferir acentos
     });
   } catch (err) {
     return jsonOut_({ ok: false, error: String(err) });

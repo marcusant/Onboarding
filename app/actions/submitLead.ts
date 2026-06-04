@@ -21,7 +21,7 @@ export async function submitLead(data: unknown) {
     // POST servidor→servidor: não há CORS, e a URL fica fora do browser.
     const response = await fetch(url, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json; charset=utf-8" },
       body: JSON.stringify(validatedData),
       cache: "no-store",
     });
