@@ -99,7 +99,7 @@ const STEPS = [
     id: 'treino',
     icon: '🏋️',
     title: 'Treino',
-    subtitle: 'Onde, quando e como treinas — para montar algo realista.',
+    subtitle: 'Onde, quando e como treinas, para montar algo realista.',
     fields: ['nivel', 'ja_treina', 'tempo_treino', 'tipos_treino', 'local_treino', 'frequencia_semanal', 'tempo_sessao', 'horario_treino', 'equipamentos']
   },
   {
@@ -130,6 +130,11 @@ export function Wizard() {
   });
 
   const watchGenero = watch("genero");
+
+  // Validade reativa do formulário inteiro (consentimento + obrigatórios).
+  // Usa safeParse para não disparar mensagens de erro só por observar.
+  const watchedValues = watch();
+  const isFormValid = anamneseSchema.safeParse(watchedValues).success;
 
   const step = STEPS[currentStep];
 
@@ -324,7 +329,7 @@ export function Wizard() {
                 <Field label="Cidade de residência"><Input placeholder="Ex: Lisboa" {...field} value={field.value || ""} /></Field>
               )} />
               <Controller name="profissao" control={control} render={({ field }) => (
-                <Field label="Profissão e rotina de trabalho"><textarea className="w-full rounded-[0.75rem] border border-border bg-input px-[0.95rem] py-[0.8rem] text-[1rem] text-foreground min-h-[5.5rem] outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(113,95,219,0.25)]" placeholder="Ex: Designer — passo a maior parte do dia sentado ao computador. Conta também se ficas em pé, caminhas muito ou fazes esforço físico no trabalho." {...field} value={field.value || ""} /></Field>
+                <Field label="Profissão e rotina de trabalho"><textarea className="w-full rounded-[0.75rem] border border-border bg-input px-[0.95rem] py-[0.8rem] text-[1rem] text-foreground min-h-[8rem] outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(113,95,219,0.25)]" placeholder="Ex: Designer, passo a maior parte do dia sentado ao computador. Conta também se ficas em pé, caminhas muito ou fazes esforço físico no trabalho." {...field} value={field.value || ""} /></Field>
               )} />
             </div>
           )}
@@ -375,7 +380,7 @@ export function Wizard() {
                 <Field label="Em quanto tempo gostarias de ver resultado?" error={errors.prazo?.message}><RadioGroup options={['1 mês', '3 meses', '6 meses', 'Sem pressa']} value={field.value || ""} onChange={field.onChange} /></Field>
               )} />
               <Controller name="tentou_antes" control={control} render={({ field }) => (
-                <Field label="Já tentaste antes? O que funcionou e o que não funcionou?"><textarea className="w-full rounded-[0.75rem] border border-border bg-input px-[0.95rem] py-[0.8rem] text-[1rem] text-foreground min-h-[5.5rem] outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(113,95,219,0.25)]" placeholder="Opcional — conta-me a tua experiência" {...field} value={field.value || ""} /></Field>
+                <Field label="Já tentaste antes? O que funcionou e o que não funcionou?"><textarea className="w-full rounded-[0.75rem] border border-border bg-input px-[0.95rem] py-[0.8rem] text-[1rem] text-foreground min-h-[5.5rem] outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(113,95,219,0.25)]" placeholder="Opcional: conta-me a tua experiência" {...field} value={field.value || ""} /></Field>
               )} />
             </div>
           )}
@@ -422,7 +427,7 @@ export function Wizard() {
                 <Field label="Tens liberação médica para atividade física?" required error={errors.liberacao_medica?.message}><RadioGroup options={['Sim', 'Não', 'Não preciso']} value={field.value || ""} onChange={field.onChange} /></Field>
               )} />
               <Controller name="dor_movimento" control={control} render={({ field }) => (
-                <Field label="Sentes dor em algum movimento específico?"><textarea className="w-full rounded-[0.75rem] border border-border bg-input px-[0.95rem] py-[0.8rem] text-[1rem] text-foreground min-h-[5.5rem] outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(113,95,219,0.25)]" placeholder="Opcional — ex: dor no joelho ao agachar" {...field} value={field.value || ""} /></Field>
+                <Field label="Sentes dor em algum movimento específico?"><textarea className="w-full rounded-[0.75rem] border border-border bg-input px-[0.95rem] py-[0.8rem] text-[1rem] text-foreground min-h-[5.5rem] outline-none focus:border-primary focus:shadow-[0_0_0_3px_rgba(113,95,219,0.25)]" placeholder="Opcional, ex: dor no joelho ao agachar" {...field} value={field.value || ""} /></Field>
               )} />
               {watchGenero === "Feminino" && (
                 <Controller name="gestante" control={control} render={({ field }) => (
@@ -494,12 +499,20 @@ export function Wizard() {
               <Controller name="nivel_stress" control={control} render={({ field }) => (
                 <Field label={<span className="inline-flex items-center gap-2">Nível de stress no dia a dia <span className="text-xl leading-none select-none" aria-hidden="true">{getSliderEmoji(field.value, STRESS_EMOJIS)}</span></span>} error={errors.nivel_stress?.message}><Slider min={1} max={10} value={field.value} onChange={field.onChange} labels={['Baixo', 'Alto']} emojis={STRESS_EMOJIS} /></Field>
               )} />
-              <Controller name="alcool" control={control} render={({ field }) => (
-                <Field label="Consomes álcool?" error={errors.alcool?.message}><RadioGroup options={['Não', 'Socialmente', 'Frequentemente']} value={field.value || ""} onChange={field.onChange} /></Field>
-              )} />
-              <Controller name="fuma" control={control} render={({ field }) => (
-                <Field label="Fumas?" error={errors.fuma?.message}><RadioGroup options={['Não', 'Às vezes', 'Sim, diariamente']} value={field.value || ""} onChange={field.onChange} /></Field>
-              )} />
+              <div className="rounded-[1rem] border border-border bg-[rgba(255,255,255,0.02)] p-[clamp(1rem,3vw,1.25rem)] space-y-5">
+                <div>
+                  <h3 className="text-[1.05rem] font-semibold text-foreground">Hábitos</h3>
+                  <p className="text-[0.85rem] text-muted-foreground mt-1">
+                    Estas informações ajudam a ajustar o teu plano com mais segurança. Caso não queiras responder, é só selecionar “Prefiro não informar”.
+                  </p>
+                </div>
+                <Controller name="alcool" control={control} render={({ field }) => (
+                  <Field label="Consomes álcool?" error={errors.alcool?.message}><RadioGroup columns={4} options={['Não', 'Socialmente', 'Frequentemente', 'Prefiro não informar']} value={field.value || ""} onChange={field.onChange} /></Field>
+                )} />
+                <Controller name="fuma" control={control} render={({ field }) => (
+                  <Field label="Fumas?" error={errors.fuma?.message}><RadioGroup columns={4} options={['Não', 'Às vezes', 'Sim, diariamente', 'Prefiro não informar']} value={field.value || ""} onChange={field.onChange} /></Field>
+                )} />
+              </div>
               <Controller name="prioridade" control={control} render={({ field }) => (
                 <Field label={<span className="inline-flex items-center gap-2">Quanto este objetivo é prioridade hoje? <span className="text-xl leading-none select-none" aria-hidden="true">🎯</span></span>} required error={errors.prioridade?.message}><Slider min={1} max={10} value={field.value} onChange={field.onChange} labels={['Pouco', 'Muito']} filled /></Field>
               )} />
@@ -541,8 +554,9 @@ export function Wizard() {
             ) : (
               <button
                 type="submit"
-                disabled={isSubmitting}
-                className="inline-flex items-center gap-2 rounded-[0.75rem] px-[1.5rem] py-[0.75rem] text-[0.95rem] font-semibold cursor-pointer border-none bg-primary text-white transition-all duration-200 hover:bg-primary disabled:opacity-60 disabled:cursor-wait"
+                disabled={isSubmitting || !isFormValid}
+                title={!isFormValid ? "Preenche os campos obrigatórios e aceita a declaração para enviar" : undefined}
+                className="inline-flex items-center gap-2 rounded-[0.75rem] px-[1.5rem] py-[0.75rem] text-[0.95rem] font-semibold border-none bg-primary text-white transition-all duration-200 cursor-pointer hover:bg-primary disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-primary"
               >
                 {isSubmitting ? (
                   <><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" /> A enviar...</>

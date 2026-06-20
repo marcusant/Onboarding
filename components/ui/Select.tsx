@@ -40,7 +40,7 @@ export function Select({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isOpen]);
 
-  // Ao abrir o menu, foca direto o campo de busca — sem precisar de um clique extra.
+  // Ao abrir o menu, foca direto o campo de busca, sem precisar de um clique extra.
   React.useEffect(() => {
     if (isOpen && searchable) {
       requestAnimationFrame(() => searchRef.current?.focus());

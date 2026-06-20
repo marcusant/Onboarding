@@ -1,5 +1,5 @@
 /**
- * Code.gs — Backend da Anamnese de Leads TRINUS (Google Sheets + Apps Script).
+ * Code.gs: Backend da Anamnese de Leads TRINUS (Google Sheets + Apps Script).
  *
  * COMO USAR (passo a passo no apps-script/README.md):
  *  1. Cria uma Google Sheet nova.
@@ -15,7 +15,7 @@
 var CONFIG = {
   // ID da planilha (está na URL: .../spreadsheets/d/<ESTE_ID>/edit).
   // Preenchido → funciona mesmo que o script seja standalone (não vinculado à sheet).
-  SPREADSHEET_ID: '1RECxrf6GilQKOPkI-INkVoQOOL8A1WcQEYCil8rNQAo',
+  SPREADSHEET_ID: '1RECxrf6GiIQKOPkI-INkVoQOOL8A1WcQEYCil8rNQAo',
   SHEET_NAME: 'Leads',
   // E-mail que recebe o alerta de cada novo lead.
   NOTIFY_EMAIL: 'integramarcus@gmail.com',
@@ -67,7 +67,7 @@ function doGet() {
  * para conferires o formato do resumo que recebes a cada novo lead.
  * Como usar: no editor do Apps Script, seleciona esta função no menu de
  * funções (em cima) e clica em "Executar". Autoriza as permissões se pedir.
- * Não grava nada na planilha — só dispara o e-mail.
+ * Não grava nada na planilha, só dispara o e-mail.
  */
 function enviarEmailDeExemplo() {
   var exemplo = {
@@ -75,7 +75,7 @@ function enviarEmailDeExemplo() {
     email: 'marcus.v.barreto@gmail.com',
     codigo_pais: '+351',
     whatsapp: '968685491',
-    profissao: 'Designer — sentado a maior parte do dia ao computador',
+    profissao: 'Designer, sentado a maior parte do dia ao computador',
     objetivo: 'Perder peso',
     prazo: '3 meses',
     local_treino: 'Misto: Ginásio e ar livre',
@@ -175,19 +175,19 @@ function sendNotification_(data, whatsappLink) {
     if (v !== '' && v !== null && v !== undefined) lines.push(label + ': ' + v);
   }
 
-  lines.push('— CONTATO —');
+  lines.push('CONTATO');
   add('Nome', data.nome_completo);
   add('E-mail', data.email);
   lines.push('WhatsApp: ' + (data.codigo_pais || '') + ' ' + (data.whatsapp || ''));
   add('Profissão', data.profissao);
 
   lines.push('');
-  lines.push('— OBJETIVO —');
+  lines.push('OBJETIVO');
   add('Objetivo', data.objetivo);
   add('Prazo desejado', data.prazo);
 
   lines.push('');
-  lines.push('— TREINO —');
+  lines.push('TREINO');
   add('Onde treina', data.local_treino);
   if (formatValue_(data.frequencia_semanal) !== '') {
     lines.push('Frequência: ' + formatValue_(data.frequencia_semanal) + ' dias/semana');
@@ -196,7 +196,7 @@ function sendNotification_(data, whatsappLink) {
   add('Horário preferido', data.horario_treino);
 
   lines.push('');
-  lines.push('— SAÚDE —');
+  lines.push('SAÚDE');
   add('Lesões', data.lesoes_anteriores);
   add('Condições médicas', data.condicoes_medicas);
   add('Liberação médica', data.liberacao_medica);

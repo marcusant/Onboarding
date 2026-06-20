@@ -15,10 +15,13 @@ interface RadioGroupProps {
   columns?: number;
 }
 
-export function RadioGroup({ options, value, onChange, className, error }: RadioGroupProps) {
+export function RadioGroup({ options, value, onChange, className, error, columns }: RadioGroupProps) {
   return (
     <div className={cn("w-full space-y-2", className)}>
-      <div className="flex flex-wrap gap-[0.6rem]">
+      <div
+        className={cn(columns ? "grid gap-[0.6rem]" : "flex flex-wrap gap-[0.6rem]")}
+        style={columns ? { gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` } : undefined}
+      >
         {options.map((opt, i) => {
           const isObj = typeof opt === 'object' && opt !== null;
           const optValue = isObj ? (opt as RadioOption).value : (opt as string);
@@ -30,7 +33,8 @@ export function RadioGroup({ options, value, onChange, className, error }: Radio
               type="button"
               onClick={() => onChange(optValue)}
               className={cn(
-                "flex-[1_1_auto] min-w-0 text-center py-[0.6rem] px-[0.5rem] rounded-[0.75rem] border text-[0.85rem] sm:text-[0.85rem] font-medium cursor-pointer select-none transition-all duration-200 whitespace-nowrap",
+                "min-w-0 text-center py-[0.6rem] px-[0.5rem] rounded-[0.75rem] border text-[0.85rem] font-medium cursor-pointer select-none transition-all duration-200",
+                columns ? "leading-tight" : "flex-[1_1_auto] whitespace-nowrap",
                 isSelected
                   ? "bg-primary border-primary text-white shadow-[0_3px_10px_-6px_rgba(113,95,219,0.5)]"
                   : "bg-input border-border text-foreground hover:border-[rgba(113,95,219,0.6)]"

@@ -11,7 +11,7 @@ interface SliderProps {
   // Para "sono" passa a escala em que mais = melhor; para "stress", mais = pior.
   emojis?: string[];
   // Preenche a barra à esquerda do thumb (sensação de "nível"). Só faz sentido
-  // em escalas onde "mais é melhor/maior" — ex.: prioridade.
+  // em escalas onde "mais é melhor/maior", ex.: prioridade.
   filled?: boolean;
   className?: string;
 }
@@ -24,7 +24,7 @@ function getEmojiIndex(value: number): number {
   return Math.max(0, Math.min(Math.floor(value / 2), EMOJI_BUCKETS - 1));
 }
 
-// Emoji correspondente ao valor atual — usado também ao lado da pergunta.
+// Emoji correspondente ao valor atual, usado também ao lado da pergunta.
 export function getSliderEmoji(value: number, emojis?: string[]): string | null {
   if (!emojis || emojis.length < EMOJI_BUCKETS) return null;
   return emojis[getEmojiIndex(value)];

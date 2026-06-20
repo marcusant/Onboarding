@@ -23,7 +23,7 @@ problema de CORS.
    - `NOTIFY_ON_NEW_LEAD`: `true` para receber e-mail, `false` para desligar.
 5. Guarda (💾).
 
-> Não precisas criar a aba "Leads" nem o cabeçalho à mão — o script cria a aba e
+> Não precisas criar a aba "Leads" nem o cabeçalho à mão. O script cria a aba e
 > a linha de cabeçalho automaticamente na primeira submissão.
 
 ### 3. Implementar como App Web
@@ -33,7 +33,7 @@ problema de CORS.
    - **Executar como:** Eu (a tua conta)
    - **Quem tem acesso:** **Qualquer pessoa**
 9. **Implementar**. Na primeira vez o Google pede para **autorizar permissões**
-   (aceder à planilha e enviar e-mail) — autoriza.
+   (aceder à planilha e enviar e-mail), autoriza.
 10. Copia a **URL do App Web** (termina em `/exec`).
 
 ### 4. Ligar ao Next.js
@@ -56,7 +56,7 @@ Pronto. Cada submissão do formulário grava uma linha na planilha.
 - **Sempre que editares o `Code.gs`**, cria uma **Nova versão** da implementação
   (Implementar → Gerir implementações → editar → Nova versão), senão a URL continua
   a executar a versão antiga.
-- **Não reordenes** o array `COLUMNS` depois de a planilha já ter dados — as colunas
+- **Não reordenes** o array `COLUMNS` depois de a planilha já ter dados, pois as colunas
   sairiam desalinhadas. Para acrescentar campos novos, adiciona ao **fim** do array.
 - O `whatsapp_link` é gerado automaticamente (`https://wa.me/<indicativo+número>`)
   para abrires a conversa com 1 clique.

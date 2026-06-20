@@ -48,8 +48,8 @@ export const anamneseSchema = z.object({
   // Passo 6: Compromisso
   qualidade_sono: z.number().min(1).max(10).default(6),
   nivel_stress: z.number().min(1).max(10).default(5),
-  alcool: z.enum(["Não", "Socialmente", "Frequentemente"]).optional().nullable(),
-  fuma: z.enum(["Não", "Às vezes", "Sim, diariamente"]).optional().nullable(),
+  alcool: z.enum(["Não", "Socialmente", "Frequentemente", "Prefiro não informar"]).optional().nullable(),
+  fuma: z.enum(["Não", "Às vezes", "Sim, diariamente", "Prefiro não informar"]).optional().nullable(),
   prioridade: z.number().min(1).max(10).default(7),
   acompanhamento: z.enum(["Acompanhamento próximo", "Só o plano"]),
   observacoes: z.string().optional().nullable(),
