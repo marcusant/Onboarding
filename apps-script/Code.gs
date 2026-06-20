@@ -135,28 +135,49 @@ function buildWhatsAppLink_(codigoPais, whatsapp) {
 /** Envia o e-mail de alerta com resumo e link de 1 clique para o WhatsApp. */
 function sendNotification_(data, whatsappLink) {
   var subject = '🔥 Novo lead TRINUS: ' + (data.nome_completo || 'Sem nome');
-  var body = [
-    '— CONTATO —',
-    'Nome: ' + (data.nome_completo || ''),
-    'E-mail: ' + (data.email || ''),
-    'WhatsApp: ' + (data.codigo_pais || '') + ' ' + (data.whatsapp || ''),
-    'Profissão: ' + formatValue_(data.profissao),
-    '',
-    '— OBJETIVO —',
-    'Objetivo: ' + formatValue_(data.objetivo),
-    '',
-    '— SAÚDE —',
-    'Lesões: ' + formatValue_(data.lesoes_anteriores),
-    'Condições médicas: ' + formatValue_(data.condicoes_medicas),
-    'Liberação médica: ' + formatValue_(data.liberacao_medica),
-    '',
-    '— TREINO —',
-    'Onde treina: ' + formatValue_(data.local_treino),
-    'Frequência: ' + formatValue_(data.frequencia_semanal) + ' dias/semana',
-    '',
-    '➡️ Abrir conversa no WhatsApp: ' + whatsappLink
-  ].join('\n');
-  MailApp.sendEmail(CONFIG.NOTIFY_EMAIL, subject, body);
+
+  var lines = [];
+
+  // Adiciona uma linha só se o valor existir (esconde campos opcionais vazios).
+  function add(label, value) {
+    var v = formatValue_(value);
+    if (v !== '' && v !== null && v !== undefined) lines.push(label + ': ' + v);
+  }
+
+  lines.push('— CONTATO —');
+  add('Nome', data.nome_completo);
+  add('E-mail', data.email);
+  lines.push('WhatsApp: ' + (data.codigo_pais || '') + ' ' + (data.whatsapp || ''));
+  add('Profissão', data.profissao);
+
+  lines.push('');
+  lines.push('— OBJETIVO —');
+  add('Objetivo', data.objetivo);
+  add('Prazo desejado', data.prazo);
+
+  lines.push('');
+  lines.push('— TREINO —');
+  add('Onde treina', data.local_treino);
+  if (formatValue_(data.frequencia_semanal) !== '') {
+    lines.push('Frequência: ' + formatValue_(data.frequencia_semanal) + ' dias/semana');
+  }
+  add('Tempo por sessão', data.tempo_sessao);
+  add('Horário preferido', data.horario_treino);
+
+  lines.push('');
+  lines.push('— SAÚDE —');
+  add('Lesões', data.lesoes_anteriores);
+  add('Condições médicas', data.condicoes_medicas);
+  add('Liberação médica', data.liberacao_medica);
+  add('Dor em movimento', data.dor_movimento);
+  if (data.gestante && data.gestante !== 'Não se aplica') {
+    add('Gestante / pós-parto', data.gestante);
+  }
+
+  lines.push('');
+  lines.push('➡️ Abrir conversa no WhatsApp: ' + whatsappLink);
+
+  MailApp.sendEmail(CONFIG.NOTIFY_EMAIL, subject, lines.join('\n'));
 }
 
 function jsonOut_(obj) {
