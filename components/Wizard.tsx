@@ -134,9 +134,28 @@ export function Wizard() {
   // Validade reativa do formulário inteiro (consentimento + obrigatórios).
   // Usa safeParse para não disparar mensagens de erro só por observar.
   const watchedValues = watch();
-  const isFormValid = anamneseSchema.safeParse(watchedValues).success;
+  const parseResult = anamneseSchema.safeParse(watchedValues);
+  const isFormValid = parseResult.success;
 
   const step = STEPS[currentStep];
+
+  // Validade reativa apenas dos campos do passo atual: o botão "Próximo"
+  // só acende quando os obrigatórios deste passo estão preenchidos,
+  // mesma lógica que o botão "Enviar" aplica ao formulário inteiro.
+  const stepFieldsWithError = parseResult.success
+    ? new Set<string>()
+    : new Set(parseResult.error.issues.map((issue) => String(issue.path[0])));
+  let isStepValid = !(step.fields as readonly string[]).some((field) =>
+    stepFieldsWithError.has(field)
+  );
+  if (step.id === 'saude') {
+    if ((watchedValues.lesoes_anteriores || []).includes('Outra') && !lesaoOutra.trim()) {
+      isStepValid = false;
+    }
+    if ((watchedValues.condicoes_medicas || []).includes('Outra') && !condicaoOutra.trim()) {
+      isStepValid = false;
+    }
+  }
 
   const handleNext = async () => {
     const fieldsToValidate = step.fields as any;
@@ -161,6 +180,8 @@ export function Wizard() {
       const next = currentStep + 1;
       setMaxStepReached(prev => Math.max(prev, next));
       setCurrentStep(next);
+      // Leva a página ao topo para a pessoa começar a ler de cima para baixo.
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -233,8 +254,9 @@ export function Wizard() {
             <button
               type="button"
               onClick={handleNext}
+              disabled={!isStepValid}
               aria-label="Avançar para o próximo passo"
-              className="flex-shrink-0 flex items-center justify-center w-9 h-9 rounded-full border border-border bg-transparent text-muted-foreground transition-all duration-200 cursor-pointer hover:text-foreground hover:border-primary"
+              className="flex-shrink-0 flex items-center justify-center w-9 h-9 rounded-full border border-border bg-transparent text-muted-foreground transition-all duration-200 cursor-pointer hover:text-foreground hover:border-primary disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:text-muted-foreground disabled:hover:border-border"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
             </button>
@@ -547,7 +569,9 @@ export function Wizard() {
               <button
                 type="button"
                 onClick={handleNext}
-                className="inline-flex items-center gap-2 rounded-[0.75rem] px-[1.5rem] py-[0.75rem] text-[0.95rem] font-semibold cursor-pointer border-none bg-primary text-white transition-all duration-200 hover:bg-primary"
+                disabled={!isStepValid}
+                title={!isStepValid ? "Preenche os campos obrigatórios para avançar" : undefined}
+                className="inline-flex items-center gap-2 rounded-[0.75rem] px-[1.5rem] py-[0.75rem] text-[0.95rem] font-semibold cursor-pointer border-none bg-primary text-white transition-all duration-200 hover:bg-primary disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-primary"
               >
                 Próximo →
               </button>

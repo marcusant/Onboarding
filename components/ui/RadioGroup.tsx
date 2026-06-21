@@ -19,8 +19,12 @@ export function RadioGroup({ options, value, onChange, className, error, columns
   return (
     <div className={cn("w-full space-y-2", className)}>
       <div
-        className={cn(columns ? "grid gap-[0.6rem]" : "flex flex-wrap gap-[0.6rem]")}
-        style={columns ? { gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` } : undefined}
+        className={cn(
+          columns
+            ? "grid grid-cols-2 gap-[0.6rem] sm:[grid-template-columns:repeat(var(--radio-cols),minmax(0,1fr))]"
+            : "flex flex-wrap gap-[0.6rem]"
+        )}
+        style={columns ? ({ "--radio-cols": columns } as React.CSSProperties) : undefined}
       >
         {options.map((opt, i) => {
           const isObj = typeof opt === 'object' && opt !== null;
